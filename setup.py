@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'pynput'],
     zip_safe=True,
     maintainer='axel',
     maintainer_email='axel@todo.todo',
@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            "keyboard_activator = voice_controller_my_robot.keyboard_activator:main"
         ],
     },
 )
