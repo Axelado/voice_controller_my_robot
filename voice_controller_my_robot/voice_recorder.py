@@ -26,7 +26,14 @@ class VoiceRecorder(Node):
 
     def listener_callback(self, msg):
         if msg.data == "1":
-            self.recorder()
+            file_path = self.recorder()
+            text = self.recognizer(file_path)
+            if text != None:
+                room_number = self.commande_interpretor(text)
+                if room_number != None:
+                    self.publish_room_number(room_number)
+                
+            
 
     def recorder(self):
         # Paramètres de l'enregistrement
@@ -48,7 +55,9 @@ class VoiceRecorder(Node):
         wavio.write(file_path, audio_data, sample_rate, sampwidth=2)
         self.get_logger().info(f"L'enregistrement a été sauvegardé sous le nom de '{file_path}'.")
         
-        self.recognizer(file_path)
+        return file_path
+        
+        
         
     
     def recognizer(self, file_path):
@@ -70,11 +79,13 @@ class VoiceRecorder(Node):
             # Pour une reconnaissance de la parole en anglais
             # result = r.recognize_google(audio_data, language="en-EN")
             print("Vous avez dit : ", result)
-            self.commande_interpretor(result)
+            return result
         except sr.UnknownValueError:
             print("Google Speech Recognition n'a pas pcmdu comprendre l'audio.")
+            return None
         except sr.RequestError as e:
             print(f"Erreur de requête avec Google Speech Recognition; {e}")
+            return None
             
     
     def commande_interpretor(self, commande):
@@ -84,13 +95,19 @@ class VoiceRecorder(Node):
 
         if match:
             # Extraire le numéro de la salle
-            numero_de_salle = match.group(1) or match.group(2)
-            print(f"Commande valide : {commande} -> Numéro de la salle : {numero_de_salle}")
-            msg = Int16()
-            msg.data = int(numero_de_salle)
-            self.publisher_.publish(msg)
+            room_number = match.group(1) or match.group(2)
+            print(f"Commande valide : {commande} -> Numéro de la salle : {room_number}")
+            return int(room_number)
+        
         else:
             print(f"Commande invalide : {commande}")
+            return None
+
+    def publish_room_number(self, room_number):
+        msg = Int16()
+        msg.data = int(room_number)
+        self.publisher_.publish(msg)
+        
         
 
         
