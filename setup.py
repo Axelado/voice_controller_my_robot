@@ -12,10 +12,9 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        # (os.path.join('share', package_name, 'records')),
-        #(os.path.join('share', package_name, 'rviz'))
+        ('share/' + package_name + '/data', ['data/rooms_data.json']),
     ],
-    install_requires=['setuptools', 'pynput', 'sounddevice', 'wavio', 'speech_recognition', 'gtts'],
+    install_requires=['setuptools', 'pynput', 'sounddevice', 'wavio', 'speech_recognition', 'gtts', 'json'],
     zip_safe=True,
     maintainer='axel',
     maintainer_email='axelniato@gmail.com',
@@ -25,7 +24,8 @@ setup(
     entry_points={
         'console_scripts': [
             "keyboard_activator = voice_controller_my_robot.keyboard_activator:main",
-            "voice_recorder = voice_controller_my_robot.voice_recorder:main"
+            "voice_recorder = voice_controller_my_robot.voice_recorder:main",
+            "pose_publish_from_room_number = voice_controller_my_robot.pose_publish_from_room_number:main"
         ],
     },
 )

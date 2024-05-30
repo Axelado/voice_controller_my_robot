@@ -8,12 +8,15 @@
   <license>TODO: License declaration</license>
 
   <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
 
   <exec_depend>pynput</exec_depend>
   <exec_depend>sounddevice</exec_depend> 
   <exec_depend>wavio</exec_depend> 
   <exec_depend>speech_recognition</exec_depend> 
   <exec_depend>gtts</exec_depend> 
+  <exec_depend>json</exec_depend>
 
 
   <test_depend>ament_copyright</test_depend>
