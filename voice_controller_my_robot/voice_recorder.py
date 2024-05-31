@@ -69,22 +69,22 @@ class VoiceRecorder(Node):
 
         # Utilisation du fichier audio au lieu du microphone
         with sr.AudioFile(audio_file) as source:
-            print("Reading audio file...")
+            self.get_logger().info("Reading audio file...")
             audio_data = r.record(source)  # Lire l'intégralité du fichier audio
-            print("End reading!")
+            self.get_logger().info("End reading!")
 
         # Reconnaissance vocale
         try:
             result = r.recognize_google(audio_data, language="fr-FR")
             # Pour une reconnaissance de la parole en anglais
             # result = r.recognize_google(audio_data, language="en-EN")
-            print("Vous avez dit : ", result)
+            self.get_logger().info(f"Vous avez dit : , {result}")
             return result
         except sr.UnknownValueError:
-            print("Google Speech Recognition n'a pas pcmdu comprendre l'audio.")
+            self.get_logger().info("Google Speech Recognition n'a pas pcmdu comprendre l'audio.")
             return None
         except sr.RequestError as e:
-            print(f"Erreur de requête avec Google Speech Recognition; {e}")
+            self.get_logger().info(f"Erreur de requête avec Google Speech Recognition; {e}")
             return None
             
     
@@ -96,11 +96,11 @@ class VoiceRecorder(Node):
         if match:
             # Extraire le numéro de la salle
             room_number = match.group(1) or match.group(2)
-            print(f"Commande valide : {commande} -> Numéro de la salle : {room_number}")
+            self.get_logger().info(f"Commande valide : {commande} -> Numéro de la salle : {room_number}")
             return int(room_number)
         
         else:
-            print(f"Commande invalide : {commande}")
+            self.get_logger().info(f"Commande invalide : {commande}")
             return None
 
     def publish_room_number(self, room_number):
