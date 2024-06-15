@@ -64,28 +64,40 @@ class VoiceRecorder(Node):
         # Initialisation du reconnaisseur de parole
         r = sr.Recognizer()
 
-        # Spécifiez le chemin vers votre fichier audio
         audio_file = file_path
-
-        # Utilisation du fichier audio au lieu du microphone
-        with sr.AudioFile(audio_file) as source:
-            self.get_logger().info("Reading audio file...")
-            audio_data = r.record(source)  # Lire l'intégralité du fichier audio
-            self.get_logger().info("End reading!")
-
-        # Reconnaissance vocale
         try:
-            result = r.recognize_google(audio_data, language="fr-FR")
-            # Pour une reconnaissance de la parole en anglais
-            # result = r.recognize_google(audio_data, language="en-EN")
-            self.get_logger().info(f"Vous avez dit : , {result}")
-            return result
-        except sr.UnknownValueError:
-            self.get_logger().info("Google Speech Recognition n'a pas pcmdu comprendre l'audio.")
-            return None
-        except sr.RequestError as e:
-            self.get_logger().info(f"Erreur de requête avec Google Speech Recognition; {e}")
-            return None
+            # Utilisation du fichier audio au lieu du microphone
+            with sr.AudioFile(audio_file) as source:
+                self.get_logger().info("Reading audio file...")
+                audio_data = r.record(source)  # Lire l'intégralité du fichier audio
+                self.get_logger().info("End reading!")
+
+            # Reconnaissance vocale
+            try:
+                result = r.recognize_google(audio_data, language="fr-FR")
+                # Pour une reconnaissance de la parole en anglais
+                # result = r.recognize_google(audio_data, language="en-EN")
+                self.get_logger().info(f"Vous avez dit : , {result}")
+            except sr.UnknownValueError:
+                self.get_logger().info("Google Speech Recognition n'a pas pu comprendre l'audio.")
+                result = None
+            except sr.RequestError as e:
+                self.get_logger().info(f"Erreur de requête avec Google Speech Recognition; {e}")
+                result = None
+        except FileNotFoundError:
+            self.get_logger().info(f"Le fichier audio {audio_file} n'a pas été trouvé.")
+            result = None
+        except Exception as e:
+            self.get_logger().info(f"Une erreur s'est produite lors de la lecture du fichier audio : {e}")
+            result = None
+            
+        if os.path.exists(audio_file):
+            try:
+                os.remove(audio_file)
+                self.get_logger().info(f"Le fichier audio {audio_file} a été supprimé.")
+            except Exception as e:
+                self.get_logger().info(f"Une erreur s'est produite lors de la suppression du fichier audio : {e}")
+        return result
             
     
     def commande_interpretor(self, commande):
